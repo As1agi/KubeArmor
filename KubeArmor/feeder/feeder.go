@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2021 Authors of KubeArmor
+// Copyright 2026  Authors of KubeArmor
 
 // Package feeder is responsible for sanitizing and relaying telemetry and alerts data to connected clients
 package feeder
@@ -35,10 +35,10 @@ func parseDataString(data string) map[string]string {
 	if data == "" {
 		return nil
 	}
-	
+
 	result := make(map[string]string)
 	pairs := strings.Fields(data) // Split by whitespace
-	
+
 	for _, pair := range pairs {
 		if strings.Contains(pair, "=") {
 			parts := strings.SplitN(pair, "=", 2) // Split only on first "="
@@ -51,7 +51,7 @@ func parseDataString(data string) map[string]string {
 			}
 		}
 	}
-	
+
 	return result
 }
 
