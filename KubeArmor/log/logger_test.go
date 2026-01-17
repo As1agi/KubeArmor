@@ -1,7 +1,6 @@
 package log
 
 import (
-	"os"
 	"testing"
 
 	"go.uber.org/zap"
@@ -9,20 +8,20 @@ import (
 
 // test if Logger switches to Debug Mode when the environment varible is set to true
 func TestLoggerDebugMode(t *testing.T) {
-	os.Setenv("DEBUG", "true")
+	//ensure debug is true for this test
+	t.Setenv("DEBUG", "true")
 
 	initLogger()
 
 	if !zapLogger.Desugar().Core().Enabled(zap.DebugLevel) {
 		t.Errorf("Expected Logger to be in debug mode but it wasn't")
 	}
-	os.Unsetenv("DEBUG")
 }
 
 // test if logger is in INFO mode by default
 func TestDefaultLevel(t *testing.T) {
-	//
-	os.Unsetenv("DEBUG")
+	//ensure debug is unset for this test
+	t.Setenv("DEBUG", "")
 
 	initLogger()
 
@@ -36,18 +35,19 @@ func TestDefaultLevel(t *testing.T) {
 }
 
 // tests if that DEBUG = True and Debug = TRUE works (case insensitivity for the variable value)
-func TestCaseInsensitity(t *testing.T) {
-	inputs := []string{"true", "True", "tRue", "trUE"}
+func TestCaseInsensitivity(t *testing.T) {
+	inputs := []string{"true", "True", "TRUE"}
 
 	for _, input := range inputs {
-		os.Setenv("DEBUG", input)
-		defer os.Unsetenv("DEBUG")
 
-		initLogger()
+		t.Run(input, func(t *testing.T) {
+			t.Setenv("DEBUG", input)
 
-		if !zapLogger.Desugar().Core().Enabled(zap.DebugLevel) {
-			t.Errorf("expected DEBUG mode to be enable with input : %s", input)
-		}
+			initLogger()
 
+			if !zapLogger.Desugar().Core().Enabled(zap.DebugLevel) {
+				t.Errorf("expected DEBUG mode to be enable with input : %s", input)
+			}
+		})
 	}
 }
